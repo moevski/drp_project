@@ -20,7 +20,7 @@ Project has three parts:
 
 3. **Flask Web App:** `run.py` This part will display three visualizaions from loaded messages dataset and has an input to let users enter a message then categorize it based on the saved model
 
-### Files Descriptions<a name="file_desc"></a>f
+### Files Descriptions<a name="file_desc"></a>
 	- README.md: This file
 	- workspace
 		- \app
@@ -32,9 +32,9 @@ Project has three parts:
 			- disaster_categories.csv: categories dataset
 			- disaster_messages.csv: messages dataset
 			- DisasterResponse.db: generated disaster response database
-			- process_data.py: ETL pipeline python code
+			- process_data.py: ETL pipeline python script
 		- \models
-			- train_classifier.py: ML pipeline python code
+			- train_classifier.py: ML pipeline python script
 
 
 ### Running Instructions <a name="instructions"></a>
