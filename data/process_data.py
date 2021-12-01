@@ -1,16 +1,70 @@
 import sys
-
+import numpy as np
+import pandas as pd
+import sqlite3
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    
+    """
+      load data from messages and categories csv files
+      
+      INPUT:
+      messages_filepath (str): path to messages csv file
+      categories_filepath (str): path to categories csv file
+      
+      OUTPUT:
+      df (DataFrame): merged data fram from messages and categories on 'id'
+    """
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = pd.merge(messages,categories, how ='left',on='id')
+    
+    return df
 
 
 def clean_data(df):
-    pass
+
+    """
+      Clean DataFrame and prepare it for ML pipleline analysis
+      
+      INPUT:
+      df (DataFrame): df created from load_data() step
+      
+      
+      OUTPUT:
+      df (DataFrame): cleaned df ready to be saved
+    """
+    # Split text in categories column and expand the result into categorical new columns
+    categories = df.categories.str.split(';', expand=True)
+    row = categories.iloc[0,:]
+    category_colnames = row.apply(lambda x: x.split("-")[0]).tolist()
+    categories.columns = category_colnames
+    
+    #remove text values leaving only 0,1 depending on category
+    categories = categories.applymap(lambda x: x.split("-")[1]).astype('int32')
+    
+    # drop original categories column, concat original dataframe with newly expanded columns
+    # and remove duplicates
+    df = df.drop(columns='categories')
+    df = pd.concat([df,categories],axis=1)
+    df = df.drop_duplicates()
+    
+    return df
 
 
 def save_data(df, database_filename):
-    pass  
+    """
+    Save the DataFrame into database file
+    
+    INPUTS:
+    df(DataFrame): Df to be saved
+    database_filename(str): file name to be saved to
+    
+    """
+    engine = create_engine('sqlite:///{}'.format(database_filename))
+    df.to_sql('messages', engine, index=False)
+      
 
 
 def main():
