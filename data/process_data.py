@@ -44,6 +44,9 @@ def clean_data(df):
     #remove text values leaving only 0,1 depending on category
     categories = categories.applymap(lambda x: x.split("-")[1]).astype('int32')
     
+    # FIX1: some values under 'related' are 2, replacing with 1
+    categories['related'] = categories['related'].replace(2,1)
+    
     # drop original categories column, concat original dataframe with newly expanded columns
     # and remove duplicates
     df = df.drop(columns='categories')
@@ -63,7 +66,9 @@ def save_data(df, database_filename):
     
     """
     engine = create_engine('sqlite:///{}'.format(database_filename))
-    df.to_sql('messages', engine, index=False)
+    
+    #Fix2: adding if_exists to replace if file db file is already existing
+    df.to_sql('messages', engine, index=False, if_exists = 'replace')
       
 
 
